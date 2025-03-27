@@ -1,0 +1,95 @@
+﻿@page "/vier-gewinnt"
+
+<h3>Vier Gewinnt</h3>
+<p>@message</p>
+<div>
+    @for (int row = 0; row < Rows; row++)
+    {
+        <tr>
+            @for (int col = 0; col < Cols; col++)
+            {
+                int x = row;
+                int y = col;
+                <td style="width: 50px; height: 50px; text-align: center; border: 1px solid black; cursor: pointer; background-color: @(GetColor(board[row, col]));"
+                    @onclick="() => DropPiece(col)">
+                </td>
+            }
+        </tr>
+    }
+</div>
+<button @onclick="ResetGame">Neues Spiel</button>
+
+@code {
+    private const int Rows = 6;
+    private const int Cols = 7;
+    private int[,] board = new int[Rows, Cols];
+    private int currentPlayer = 1;
+    private string message = "Spieler 1 ist am Zug";
+
+    private void DropPiece(int col)
+    {
+        for (int row = Rows - 1; row >= 0; row--)
+        {
+            if (board[row, col] == 0)
+            {
+                board[row, col] = currentPlayer;
+                StateHasChanged(); // UI-Update
+                
+                if (CheckWin(row, col))
+                {
+                    message = $"Spieler {currentPlayer} gewinnt!";
+                    return;
+                }
+                
+                currentPlayer = 3 - currentPlayer; // Spielerwechsel
+                message = $"Spieler {currentPlayer} ist am Zug";
+                return;
+            }
+        }
+    }
+
+    private bool CheckWin(int row, int col)
+    {
+        return CheckDirection(row, col, 1, 0) || // Horizontal
+               CheckDirection(row, col, 0, 1) || // Vertikal
+               CheckDirection(row, col, 1, 1) || // Diagonal /
+               CheckDirection(row, col, 1, -1);  // Diagonal \
+    }
+
+    private bool CheckDirection(int row, int col, int dRow, int dCol)
+    {
+        int count = 1;
+        for (int i = 1; i < 4; i++)
+        {
+            int r = row + i * dRow;
+            int c = col + i * dCol;
+            if (r >= 0 && r < Rows && c >= 0 && c < Cols && board[r, c] == currentPlayer)
+                count++;
+            else
+                break;
+        }
+        for (int i = 1; i < 4; i++)
+        {
+            int r = row - i * dRow;
+            int c = col - i * dCol;
+            if (r >= 0 && r < Rows && c >= 0 && c < Cols && board[r, c] == currentPlayer)
+                count++;
+            else
+                break;
+        }
+        return count >= 4;
+    }
+
+    private void ResetGame()
+    {
+        Array.Clear(board, 0, board.Length);
+        currentPlayer = 1;
+        message = "Spieler 1 ist am Zug";
+        StateHasChanged();
+    }
+
+    private string GetColor(int value)
+    {
+        return value == 1 ? "red" : value == 2 ? "yellow" : "white";
+    }
+}
