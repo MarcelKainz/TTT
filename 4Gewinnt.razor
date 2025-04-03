@@ -2,20 +2,16 @@
 
 <h3>Vier Gewinnt</h3>
 <p>@message</p>
-<div>
     @for (int row = 0; row < Rows; row++)
     {
+        <div>
             @for (int col = 0; col < Cols; col++)
             {
-                int x = row;
-                int y = col;
-                <td style="width: 50px; height: 50px; text-align: center; border: 1px solid black; cursor: pointer; background-color: @(GetColor(board[row, col]));"
-                    @onclick="() => DropPiece(col)">
-                </td>
+                <div style="width: 50px; height: 50px; text-align: center; border: 1px solid black; cursor: pointer; "@onclick="() => DropPiece(col)"></div>
             }
-    }
-</div>
-<button @onclick="ResetGame">Neues Spiel</button>
+            }
+        </div>
+        <button @onclick="ResetGame">Neues Spiel</button>
 
 @code {
     private const int Rows = 6;
@@ -31,14 +27,13 @@
             if (board[row, col] == 0)
             {
                 board[row, col] = currentPlayer;
-                StateHasChanged(); // UI-Update
-                
+
                 if (CheckWin(row, col))
                 {
                     message = $"Spieler {currentPlayer} gewinnt!";
                     return;
                 }
-                
+
                 currentPlayer = 3 - currentPlayer; // Spielerwechsel
                 message = $"Spieler {currentPlayer} ist am Zug";
                 return;
@@ -51,7 +46,7 @@
         return CheckDirection(row, col, 1, 0) || // Horizontal
                CheckDirection(row, col, 0, 1) || // Vertikal
                CheckDirection(row, col, 1, 1) || // Diagonal /
-               CheckDirection(row, col, 1, -1);  // Diagonal \
+               CheckDirection(row, col, 1, -1); // Diagonal \
     }
 
     private bool CheckDirection(int row, int col, int dRow, int dCol)
@@ -66,6 +61,7 @@
             else
                 break;
         }
+
         for (int i = 1; i < 4; i++)
         {
             int r = row - i * dRow;
@@ -75,6 +71,7 @@
             else
                 break;
         }
+
         return count >= 4;
     }
 
@@ -85,9 +82,5 @@
         message = "Spieler 1 ist am Zug";
         StateHasChanged();
     }
-
-    private string GetColor(int value)
-    {
-        return value == 1 ? "red" : value == 2 ? "yellow" : "white";
     }
 }
