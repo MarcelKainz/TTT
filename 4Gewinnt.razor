@@ -1,11 +1,10 @@
-﻿@page "/vier-gewinnt"
+﻿@page "/4Gewinnt"
 
 <h3>Vier Gewinnt</h3>
 <p>@message</p>
 <div>
     @for (int row = 0; row < Rows; row++)
     {
-        <tr>
             @for (int col = 0; col < Cols; col++)
             {
                 int x = row;
@@ -14,7 +13,6 @@
                     @onclick="() => DropPiece(col)">
                 </td>
             }
-        </tr>
     }
 </div>
 <button @onclick="ResetGame">Neues Spiel</button>
