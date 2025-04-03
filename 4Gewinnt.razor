@@ -7,17 +7,18 @@
         <div>
             @for (int col = 0; col < Cols; col++)
             {
-                <div style="width: 50px; height: 50px; text-align: center; border: 1px solid black; cursor: pointer; "@onclick="() => DropPiece(col)"></div>
-            }
+                <button style="width: 50px; height: 50px; text-align: center; border: 1px solid black; cursor: pointer; "@onclick="() => DropPiece(col)"></button>
             }
         </div>
-        <button @onclick="ResetGame">Neues Spiel</button>
+    }
+    <button style="width: 50px; height: 50px; text-align: center; border: 1px solid black; cursor: pointer;" @onclick="() => DropPiece(Cols)"></button>
+    <button @onclick="ResetGame">Neues Spiel</button>
 
-@code {
+    @code {
     private const int Rows = 6;
     private const int Cols = 7;
     private int[,] board = new int[Rows, Cols];
-    private int currentPlayer = 1;
+    private string currentPlayer = "x";
     private string message = "Spieler 1 ist am Zug";
 
     private void DropPiece(int col)
@@ -26,7 +27,7 @@
         {
             if (board[row, col] == 0)
             {
-                board[row, col] = currentPlayer;
+                board[row, col] = Convert.ToInt32(currentPlayer);
 
                 if (CheckWin(row, col))
                 {
@@ -34,7 +35,13 @@
                     return;
                 }
 
-                currentPlayer = 3 - currentPlayer; // Spielerwechsel
+                if (currentPlayer == "x")
+                    currentPlayer = "o"; // Spielerwechsel
+                else
+                    currentPlayer = "x";
+                    
+                
+                
                 message = $"Spieler {currentPlayer} ist am Zug";
                 return;
             }
@@ -56,7 +63,7 @@
         {
             int r = row + i * dRow;
             int c = col + i * dCol;
-            if (r >= 0 && r < Rows && c >= 0 && c < Cols && board[r, c] == currentPlayer)
+            if (r >= 0 && r < Rows && c >= 0 && c < Cols && board[r, c] == Convert.ToInt32(currentPlayer))
                 count++;
             else
                 break;
@@ -66,7 +73,7 @@
         {
             int r = row - i * dRow;
             int c = col - i * dCol;
-            if (r >= 0 && r < Rows && c >= 0 && c < Cols && board[r, c] == currentPlayer)
+            if (r >= 0 && r < Rows && c >= 0 && c < Cols && board[r, c] == Convert.ToInt32(currentPlayer))
                 count++;
             else
                 break;
@@ -78,9 +85,7 @@
     private void ResetGame()
     {
         Array.Clear(board, 0, board.Length);
-        currentPlayer = 1;
-        message = "Spieler 1 ist am Zug";
-        StateHasChanged();
-    }
+        currentPlayer = "x";
+        message = "Spieler x ist am Zug";
     }
 }
